@@ -1,9 +1,6 @@
 package kaptainwutax.mcutils.rand;
 
 import kaptainwutax.mathutils.util.Mth;
-import kaptainwutax.mcutils.rand.seed.PositionSeed;
-import kaptainwutax.mcutils.rand.seed.RegionSeed;
-import kaptainwutax.mcutils.util.pos.BPos;
 import kaptainwutax.mcutils.version.MCVersion;
 import kaptainwutax.mcutils.version.UnsupportedVersion;
 import kaptainwutax.seedutils.lcg.LCG;
@@ -170,27 +167,6 @@ public class ChunkRand extends JRand {
 	}
 
 	/**
-	 * Seeds the randomizer to determine the start position of structure features such as temples,
-	 * monuments and buried treasures within a region.
-	 * <p>
-	 * The region coordinates pair corresponds to the coordinates of the region the seeded chunk
-	 * lies in. For example, a swamp hut region is 32 by 32 chunks meaning that all chunks that
-	 * lie within that region get seeded the same way.
-	 *
-	 * @param worldSeed The world seed (or at the very least its 48 lowest bits)
-	 * @param regionX   The X coordinate of the region the chunk lies in
-	 * @param regionZ   The Z coordinate of the region the chunk lies in
-	 * @param salt      The salt value for the structure
-	 * @param version   The Minecraft version to use by the algorithm
-	 * @return The region seed
-	 */
-	public long setRegionSeed(long worldSeed, int regionX, int regionZ, int salt, MCVersion version) {
-		long seed = (long) regionX * RegionSeed.A + (long) regionZ * RegionSeed.B + worldSeed + (long) salt;
-		this.setSeed(seed);
-		return seed & Mth.MASK_48;
-	}
-
-	/**
 	 * This method is not explicitly declared in the Minecraft codebase but is used by nether fortresses
 	 * and pillager outposts to negate a spawn attempt. This is by far the weakest hash of the set
 	 * since it has horrible coordinate collisions.
@@ -239,30 +215,6 @@ public class ChunkRand extends JRand {
 	 */
 	public long setSlimeSeed(long worldSeed, int chunkX, int chunkZ, MCVersion version) {
 		return this.setSlimeSeed(worldSeed, chunkX, chunkZ, 987234911L, version);
-	}
-
-	/**
-	 * Seeds the randomizer to decide if a chunk should be used for block dependant processor, door, bed...
-	 *
-	 * @param x       the block position X
-	 * @param y       the block position Y
-	 * @param z       the block position Z
-	 * @param version The Minecraft version to use by the algorithm
-	 * @return The position seed for door, bed, jigsaw processor
-	 */
-	public long setPositionSeed(int x, int y, int z, MCVersion version) {
-		long seed = PositionSeed.getPositionSeed(x, y, z);
-		this.setSeed(seed);
-		return seed & Mth.MASK_48;
-	}
-
-	/**
-	 * @param pos     the block position
-	 * @param version The Minecraft version to use by the algorithm
-	 * @return The position seed for door, bed, jigsaw processor
-	 */
-	public long setPositionSeed(BPos pos, MCVersion version) {
-		return this.setPositionSeed(pos.getX(), pos.getY(), pos.getZ(), version);
 	}
 
 	public long setBaseStoneSeed(long worldSeed, int x, int y, int z) {

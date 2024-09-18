@@ -187,10 +187,6 @@ public class JRand extends Rand {
 
 	}
 
-	public CombinedJRand combine(long steps) {
-		return new CombinedJRand(steps, this.getSeed(), false);
-	}
-
 	public JRand copy() {
 		return new JRand(this.getSeed(), false);
 	}

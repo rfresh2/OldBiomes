@@ -1,8 +1,5 @@
 package kaptainwutax.mcutils.util.pos;
 
-import kaptainwutax.mcutils.util.block.BlockDirection;
-import kaptainwutax.mcutils.util.block.BlockMirror;
-import kaptainwutax.mcutils.util.block.BlockRotation;
 import kaptainwutax.mcutils.util.math.Vec3i;
 
 @SuppressWarnings("unused")
@@ -53,38 +50,4 @@ public class BPos extends Vec3i {
 	public BPos toChunkCorner() {
 		return new BPos(this.getX() & -16, this.getY(), this.getZ() & -16);
 	}
-
-	public CPos toChunkPos() {
-		return new CPos(this.getX() >> 4, this.getZ() >> 4);
-	}
-
-	public BPos relative(BlockDirection direction) {
-		return new BPos(this.getX() + direction.getVector().getX(), this.getY() + direction.getVector().getY(), this.getZ() + direction.getVector().getY());
-	}
-
-	public BPos relative(BlockDirection direction, int offset) {
-		return offset == 0 ? this : new BPos(this.getX() + direction.getVector().getX() * offset, this.getY() + direction.getVector().getY() * offset, this.getZ() + direction.getVector().getZ() * offset);
-	}
-
-	public BPos relative(BlockDirection.Axis axis, int offset) {
-		if (offset == 0) {
-			return this;
-		} else {
-			int i = axis == BlockDirection.Axis.X ? offset : 0;
-			int j = axis == BlockDirection.Axis.Y ? offset : 0;
-			int k = axis == BlockDirection.Axis.Z ? offset : 0;
-			return new BPos(this.getX() + i, this.getY() + j, this.getZ() + k);
-		}
-	}
-
-	public RPos toRegionPos(int regionSize) {
-		int x = this.getX() < 0 ? this.getX() - regionSize + 1 : this.getX();
-		int z = this.getZ() < 0 ? this.getZ() - regionSize + 1 : this.getZ();
-		return new RPos(x / regionSize, z / regionSize, regionSize);
-	}
-
-	public BPos transform(BlockMirror mirror, BlockRotation rotation, BPos pivot) {
-		return rotation.rotate(mirror.mirror(this), pivot);
-	}
-
 }

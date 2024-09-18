@@ -1,11 +1,7 @@
 package kaptainwutax.biomeutils.biome;
 
-import kaptainwutax.biomeutils.biome.surface.SurfaceConfig;
-import kaptainwutax.biomeutils.biome.surface.builder.SurfaceBuilder;
 import kaptainwutax.biomeutils.source.OverworldBiomeSource;
-import kaptainwutax.biomeutils.source.StaticNoiseSource;
 import kaptainwutax.mcutils.state.Dimension;
-import kaptainwutax.mcutils.util.pos.BPos;
 import kaptainwutax.mcutils.version.MCVersion;
 
 import java.util.Objects;
@@ -26,11 +22,10 @@ public class Biome {
 	private final float depth;
 
 	private final Biome parent;
-	private final SurfaceBuilder surfaceBuilder;
 	private Biome child;
 
 	public Biome(MCVersion version, Dimension dimension, int id, String name, Category category, Precipitation precipitation,
-				 float temperature, float scale, float depth, Biome parent, SurfaceBuilder surfaceBuilder) {
+				 float temperature, float scale, float depth, Biome parent) {
 		this.version = version;
 		this.dimension = dimension;
 		this.id = id;
@@ -41,7 +36,6 @@ public class Biome {
 		this.scale = scale;
 		this.depth = depth;
 		this.parent = parent;
-		this.surfaceBuilder = surfaceBuilder;
 
 		if(this.parent != null) {
 			this.parent.child = this;
@@ -110,14 +104,6 @@ public class Biome {
 
 	public Biome getChild() {
 		return this.child;
-	}
-
-	public SurfaceConfig getSurfaceConfig() {
-		return surfaceBuilder.getSurfaceConfig();
-	}
-
-	public SurfaceBuilder getSurfaceBuilder() {
-		return surfaceBuilder;
 	}
 
 	public static boolean isShallowOcean(int id, MCVersion version) {
@@ -291,38 +277,4 @@ public class Biome {
 			return this.predicate.test(source.getBiome(this.x, 0, this.z));
 		}
 	}
-
-	public float getTemperatureAt(int x, int y, int z) {
-		return StaticNoiseSource.TEMPERATURE_CACHE.get(x, y, z, this::getTemperature);
-	}
-
-	public float getTemperatureAt(BPos pos) {
-		return StaticNoiseSource.TEMPERATURE_CACHE.get(pos.getX(), pos.getY(), pos.getZ(), this::getTemperature);
-	}
-
-	private float getTemperature(int x, int y, int z) {
-		float temperature = this.temperature;
-		if(this.equals(Biomes.FROZEN_OCEAN) || this.equals(Biomes.DEEP_FROZEN_OCEAN)) {
-			double d0 = StaticNoiseSource.FROZEN_TEMPERATURE_NOISE.sample((double)x * 0.05D, (double)z * 0.05D, false) * 7.0D;
-			double d1 = StaticNoiseSource.BIOME_INFO_NOISE.sample((double)x * 0.2D, (double)z * 0.2D, false);
-			double d2 = d0 + d1;
-			if(d2 < 0.3D) {
-				double d3 = StaticNoiseSource.BIOME_INFO_NOISE.sample((double)x * 0.09D, (double)z * 0.09D, false);
-				if(d3 < 0.8D) {
-					temperature = 0.2F;
-				}
-			}
-		}
-		if(y > 64) {
-			float f1 = (float)(StaticNoiseSource.TEMPERATURE_NOISE.sample((float)x / 8.0F, (float)z / 8.0F, false) * 4.0D);
-			return temperature - (f1 + (float)y - 64.0F) * 0.05F / 30.0F;
-		}
-		return temperature;
-	}
-
-	@FunctionalInterface
-	public interface TemperatureSampler {
-		float sample(int x, int y, int z);
-	}
-
 }
