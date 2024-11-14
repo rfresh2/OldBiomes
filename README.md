@@ -33,7 +33,7 @@ Maven:
     <dependency>
         <groupId>com.github.rfresh2</groupId>
         <artifactId>OldBiomes</artifactId>
-        <version>1.0</version>
+        <version>1.0.0</version>
     </dependency>
 <dependencies>
 ```
